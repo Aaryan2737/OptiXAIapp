@@ -9,9 +9,10 @@ class SyncService {
   static void initialize() {
     Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: true, // Set to false in production
     );
     
+    final token = Supabase.instance.client.auth.currentSession?.refreshToken;
+
     // Register periodic background task
     Workmanager().registerPeriodicTask(
       "1",
@@ -20,16 +21,19 @@ class SyncService {
       constraints: Constraints(
         networkType: NetworkType.connected, // Only run when internet is available
       ),
+      inputData: token != null ? {'refresh_token': token} : null,
     );
   }
 
   static void registerOneOffSync() {
+    final token = Supabase.instance.client.auth.currentSession?.refreshToken;
     Workmanager().registerOneOffTask(
       "oneOffSync",
       syncTaskName,
       constraints: Constraints(
         networkType: NetworkType.connected,
       ),
+      inputData: token != null ? {'refresh_token': token} : null,
     );
   }
 
@@ -44,7 +48,7 @@ class SyncService {
       try {
         final payload = {
           'local_id': p['local_id'],
-          'asha_worker_id': p['asha_worker_id'],
+          'asha_worker_id': supabase.auth.currentUser!.id,
           'full_name': p['full_name'],
           'age': p['age'],
           'gender': p['gender'],
@@ -54,8 +58,8 @@ class SyncService {
         // Upsert to Supabase
         await supabase.from('patients').upsert(payload, onConflict: 'local_id');
         // Mark locally synced
-        await db.markPatientSynced(p['local_id']);
-        print("Synced Patient: \${p['local_id']}");
+        await db.markPatientSynced(p['local_id'] as String);
+        print("Synced Patient: ${p['local_id']}");
       } catch (e) {
         print("Failed to sync patient: \$e");
       }
@@ -69,18 +73,18 @@ class SyncService {
         String? rightImageUrl;
 
         // Upload Left Eye Image
-        if (s['left_eye_image_path'] != null) {
-          final file = File(s['left_eye_image_path']);
+        if (s['left_eye_local_path'] != null) {
+          final file = File(s['left_eye_local_path'] as String);
           final fileName = "left_${s['local_id']}.jpg";
-          await supabase.storage.from('fundus-images').upload(fileName, file);
+          await supabase.storage.from('fundus-images').upload(fileName, file, fileOptions: const FileOptions(upsert: true));
           leftImageUrl = supabase.storage.from('fundus-images').getPublicUrl(fileName);
         }
 
         // Upload Right Eye Image
-        if (s['right_eye_image_path'] != null) {
-          final file = File(s['right_eye_image_path']);
+        if (s['right_eye_local_path'] != null) {
+          final file = File(s['right_eye_local_path'] as String);
           final fileName = "right_${s['local_id']}.jpg";
-          await supabase.storage.from('fundus-images').upload(fileName, file);
+          await supabase.storage.from('fundus-images').upload(fileName, file, fileOptions: const FileOptions(upsert: true));
           rightImageUrl = supabase.storage.from('fundus-images').getPublicUrl(fileName);
         }
 
@@ -91,20 +95,20 @@ class SyncService {
           'right_eye_image_url': rightImageUrl,
           'left_eye_grade': s['left_eye_grade'],
           'right_eye_grade': s['right_eye_grade'],
-          'is_urgent_refer': s['is_urgent_refer'] == 1,
+          'is_urgent_refer': s['is_urgent_refer'] == 1 || s['is_urgent_refer'] == true,
           'thresholds_version': s['thresholds_version'],
           'sync_status': 'synced',
         };
 
         // We must map local_id -> actual patient UUID in Supabase
-        final patientRes = await supabase.from('patients').select('id').eq('local_id', s['patient_local_id']).single();
+        final patientRes = await supabase.from('patients').select('id').eq('local_id', s['patient_local_id'] as String).single();
         payload['patient_id'] = patientRes['id'];
 
         // Upsert Screening
         await supabase.from('screenings').upsert(payload, onConflict: 'local_id');
         // Mark locally synced
-        await db.markScreeningSynced(s['local_id']);
-        print("Synced Screening: \${s['local_id']}");
+        await db.markScreeningSynced(s['local_id'] as String);
+        print("Synced Screening: ${s['local_id']}");
       } catch (e) {
         print("Failed to sync screening: \$e");
       }
@@ -124,8 +128,13 @@ void callbackDispatcher() {
       // Replace with your actual URL and Anon Key via env or secure storage in production.
       await Supabase.initialize(
         url: 'https://ceuvbmchntjytouatigz.supabase.co',
-        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldXZibWNobnRqeXRvdWF0aWd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MDc1NTEsImV4cCI6MjEwNTM4MzU1MX0.dwnb4ZPvfHIjJS3zPIYhfISIUxpSHpmYJPFM-6vhhLM',
+        publishableKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldXZibWNobnRqeXRvdWF0aWd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MDc1NTEsImV4cCI6MjEwNTM4MzU1MX0.dwnb4ZPvfHIjJS3zPIYhfISIUxpSHpmYJPFM-6vhhLM',
       );
+      
+      final refreshToken = inputData?['refresh_token'] as String?;
+      if (refreshToken != null) {
+        await Supabase.instance.client.auth.recoverSession(refreshToken);
+      }
       
       await SyncService.performSync();
     }

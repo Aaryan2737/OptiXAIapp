@@ -1,5 +1,6 @@
 // Author: Aaryan Patil (Roll No. 26) - OptiXAI
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -7,11 +8,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 class OptiXAIEngine {
   Interpreter? _interpreter;
   
-  // Pre-allocated buffers to prevent garbage collection pauses (Zero-Copy approach)
-  // Using int for TFLite quantized integer inputs
-  late List<List<List<List<int>>>> _inputBuffer;
-  late List<List<double>> _outputBuffer;
-  
+  // Calibrated thresholds exported from calibrate_thresholds.py
   static const int inputSize = 224;
   static const int channels = 3;
   
@@ -35,71 +32,10 @@ class OptiXAIEngine {
         'assets/models/optixai_dr_model.tflite',
         options: interpreterOptions,
       );
-
-      // Pre-allocate int tensor buffers for raw pixel input (NHWC format)
-      _inputBuffer = List.generate(
-        1,
-        (i) => List.generate(
-          inputSize,
-          (j) => List.generate(
-            inputSize,
-            (k) => List.filled(channels, 0),
-          ),
-        ),
-      );
-      
-      // MobileNetV4 output is typically 5 logits/probs for the DR grades
-      _outputBuffer = List.generate(1, (i) => List.filled(5, 0.0));
       
       print('OptiXAI Edge Model Initialized Successfully.');
     } catch (e) {
       print('Error initializing OptiXAI edge model: $e');
-    }
-  }
-
-  /// Dart-only fallback preprocessing (no CLAHE, auto-crop, or denoising).
-  /// 
-  /// IMPORTANT: ImageNet normalization is baked into the TFLite model,
-  /// so this simply extracts raw RGB pixels in [0-255].
-  /// 
-  /// For production use, prefer runInferenceFromPreprocessed() with the
-  /// opencv_dart pipeline (via ImageIngestionService) which also applies
-  /// CLAHE, auto-crop, and denoising.
-  void _preprocessToBuffer(Uint8List imageBytes) {
-    // Decode camera stream
-    final image = img.decodeImage(imageBytes)!;
-    final resizedImage = img.copyResize(image, width: inputSize, height: inputSize);
-
-    // Extract raw RGB pixels without floating point normalization
-    for (int y = 0; y < inputSize; y++) {
-      for (int x = 0; x < inputSize; x++) {
-        final pixel = resizedImage.getPixel(x, y);
-        
-        // Channel order: RGB
-        _inputBuffer[0][y][x][0] = pixel.r.toInt();
-        _inputBuffer[0][y][x][1] = pixel.g.toInt();
-        _inputBuffer[0][y][x][2] = pixel.b.toInt();
-      }
-    }
-  }
-
-  /// Loads pre-processed raw pixel data from the opencv_dart pipeline (ImageIngestionService)
-  /// into the TFLite input buffer. This is the PREFERRED path for production because
-  /// ImageIngestionService applies the full clinical pipeline (CLAHE, auto-crop,
-  /// denoising, glare removal) using opencv_dart bindings in a background isolate.
-  ///
-  /// [preprocessedData] must be a Uint8List of length 224*224*3 in NHWC/RGB order.
-  void _loadPreprocessedToBuffer(Uint8List preprocessedData) {
-    assert(preprocessedData.length == inputSize * inputSize * channels,
-        'Expected ${inputSize * inputSize * channels} bytes, got ${preprocessedData.length}');
-    
-    int idx = 0;
-    for (int y = 0; y < inputSize; y++) {
-      for (int x = 0; x < inputSize; x++) {
-        _inputBuffer[0][y][x][0] = preprocessedData[idx++]; // R
-        _inputBuffer[0][y][x][1] = preprocessedData[idx++]; // G
-        _inputBuffer[0][y][x][2] = preprocessedData[idx++]; // B
-      }
     }
   }
 
@@ -112,14 +48,80 @@ class OptiXAIEngine {
       throw Exception('OptiXAI Interpreter not initialized.');
     }
 
-    // 1. Dart-only Preprocessing (raw pixels, no normalization)
-    _preprocessToBuffer(imageBytes);
+    final inputTensor = _interpreter!.getInputTensor(0);
+    final inputShape = inputTensor.shape; // [1, height, width, 3]
+    final height = inputShape[1];
+    final width = inputShape[2];
+    final inputType = inputTensor.type;
+
+    // 1. Dart-only Preprocessing (raw pixels, dynamically typed)
+    final image = img.decodeImage(imageBytes)!;
+    final resizedImage = img.copyResize(image, width: width, height: height);
+
+    Object reshapedInput;
+    if (inputType == TensorType.float32) {
+      final flatList = <double>[];
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          final pixel = resizedImage.getPixel(x, y);
+          flatList.add(((pixel.r / 255.0) - 0.5) * 2.0);
+          flatList.add(((pixel.g / 255.0) - 0.5) * 2.0);
+          flatList.add(((pixel.b / 255.0) - 0.5) * 2.0);
+        }
+      }
+      reshapedInput = flatList.reshape<double>(inputShape);
+    } else {
+      final flatList = <int>[];
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          final pixel = resizedImage.getPixel(x, y);
+          if (inputType == TensorType.int8) {
+            flatList.add(pixel.r.toInt() - 128);
+            flatList.add(pixel.g.toInt() - 128);
+            flatList.add(pixel.b.toInt() - 128);
+          } else {
+            flatList.add(pixel.r.toInt());
+            flatList.add(pixel.g.toInt());
+            flatList.add(pixel.b.toInt());
+          }
+        }
+      }
+      reshapedInput = flatList.reshape<int>(inputShape);
+    }
 
     // 2. Local Inference execution
-    _interpreter!.run(_inputBuffer, _outputBuffer);
+    final outputTensor = _interpreter!.getOutputTensor(0);
+    final outputType = outputTensor.type;
+    
+    Object outputBuffer;
+    if (outputType == TensorType.float32) {
+      outputBuffer = List.generate(1, (i) => List.filled(5, 0.0));
+    } else {
+      outputBuffer = List.generate(1, (i) => List.filled(5, 0));
+    }
 
-    // 3. Post-processing
-    return _postProcess(_outputBuffer[0]);
+    _interpreter!.run(reshapedInput, outputBuffer);
+
+    // 3. Dynamic Dequantization
+    List<double> rawProbs = [];
+    if (outputType == TensorType.float32) {
+      final buffer = outputBuffer as List<List<double>>;
+      for (int i = 0; i < 5; i++) {
+        rawProbs.add(buffer[0][i]);
+      }
+    } else {
+      final buffer = outputBuffer as List<List<int>>;
+      final scale = outputTensor.params.scale;
+      final zeroPoint = outputTensor.params.zeroPoint;
+      for (int i = 0; i < 5; i++) {
+        int quantizedValue = buffer[0][i];
+        double probability = (quantizedValue - zeroPoint) * scale;
+        rawProbs.add(probability);
+      }
+    }
+
+    // 4. Post-processing
+    return _postProcess(_softmax(rawProbs));
   }
 
   /// Execute Edge AI Inference from pre-processed Uint8List data.
@@ -132,14 +134,86 @@ class OptiXAIEngine {
       throw Exception('OptiXAI Interpreter not initialized.');
     }
 
+    final inputTensor = _interpreter!.getInputTensor(0);
+    final inputShape = inputTensor.shape; 
+    final inputType = inputTensor.type;
+
     // 1. Load pre-processed native output directly into buffer
-    _loadPreprocessedToBuffer(preprocessedData);
+    // OpenCV outputs BGR, so we must invert the byte reads (b, g, r) to match TFLite RGB.
+    Object reshapedInput;
+    if (inputType == TensorType.float32) {
+      final flatList = <double>[];
+      for (int i = 0; i < preprocessedData.length; i += 3) {
+          final int b = preprocessedData[i];
+          final int g = preprocessedData[i+1];
+          final int r = preprocessedData[i+2];
+          
+          flatList.add(((r / 255.0) - 0.5) * 2.0);
+          flatList.add(((g / 255.0) - 0.5) * 2.0);
+          flatList.add(((b / 255.0) - 0.5) * 2.0);
+      }
+      reshapedInput = flatList.reshape<double>(inputShape);
+    } else {
+      final flatList = <int>[];
+      for (int i = 0; i < preprocessedData.length; i += 3) {
+          final int b = preprocessedData[i];
+          final int g = preprocessedData[i+1];
+          final int r = preprocessedData[i+2];
+          
+          if (inputType == TensorType.int8) {
+            flatList.add(r - 128);
+            flatList.add(g - 128);
+            flatList.add(b - 128);
+          } else {
+            flatList.add(r);
+            flatList.add(g);
+            flatList.add(b);
+          }
+      }
+      reshapedInput = flatList.reshape<int>(inputShape);
+    }
 
     // 2. Local Inference execution
-    _interpreter!.run(_inputBuffer, _outputBuffer);
+    final outputTensor = _interpreter!.getOutputTensor(0);
+    final outputType = outputTensor.type;
+    
+    Object outputBuffer;
+    if (outputType == TensorType.float32) {
+      outputBuffer = List.generate(1, (i) => List.filled(5, 0.0));
+    } else {
+      outputBuffer = List.generate(1, (i) => List.filled(5, 0));
+    }
 
-    // 3. Post-processing
-    return _postProcess(_outputBuffer[0]);
+    _interpreter!.run(reshapedInput, outputBuffer);
+
+    // 3. Dynamic Dequantization
+    List<double> rawProbs = [];
+    if (outputType == TensorType.float32) {
+      final buffer = outputBuffer as List<List<double>>;
+      for (int i = 0; i < 5; i++) {
+        rawProbs.add(buffer[0][i]);
+      }
+    } else {
+      final buffer = outputBuffer as List<List<int>>;
+      final scale = outputTensor.params.scale;
+      final zeroPoint = outputTensor.params.zeroPoint;
+      for (int i = 0; i < 5; i++) {
+        int quantizedValue = buffer[0][i];
+        double probability = (quantizedValue - zeroPoint) * scale;
+        rawProbs.add(probability);
+      }
+    }
+
+    // 4. Post-processing
+    return _postProcess(_softmax(rawProbs));
+  }
+
+  /// Converts raw logits into a proper probability distribution summing to 1.0
+  List<double> _softmax(List<double> logits) {
+    double maxLogit = logits.reduce(max);
+    List<double> expLogits = logits.map((logit) => exp(logit - maxLogit)).toList();
+    double sumExp = expLogits.reduce((a, b) => a + b);
+    return expLogits.map((e) => e / sumExp).toList();
   }
 
   /// Shared post-processing: applies calibrated thresholds, computes clinical flags.
@@ -148,10 +222,8 @@ class OptiXAIEngine {
     double maxConfidence = -1.0;
     
     for (int i = 0; i < 5; i++) {
-      // Adjust standard confidence based on Youden's Index calibrated boundaries
-      double adjustedConfidence = rawProbs[i] / _calibratedThresholds[i];
-      if (adjustedConfidence > maxConfidence) {
-        maxConfidence = adjustedConfidence;
+      if (rawProbs[i] > maxConfidence) {
+        maxConfidence = rawProbs[i];
         predictedGrade = i;
       }
     }
@@ -170,6 +242,10 @@ class OptiXAIEngine {
     // Even when the model misclassifies 4→3, this combined score remains high,
     // giving clinicians a reliable "urgency signal" regardless of the specific grade.
     double urgentReferConfidence = rawProbs[3] + rawProbs[4];
+
+    print('[OptiXAI Debug] rawProbs: $rawProbs');
+    print('[OptiXAI Debug] predictedGrade: $predictedGrade');
+    print('[OptiXAI Debug] maxConfidence: $maxConfidence');
 
     return {
       'dr_grade': predictedGrade, // 0-4 (full 5-class prediction preserved for analytics)

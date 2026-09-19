@@ -5,14 +5,13 @@
 // No custom C++ / CMake / NDK required.
 // All heavy operations execute inside a Flutter Isolate to avoid UI jank.
 
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:opencv_dart/opencv_dart.dart' as cv;
 
 /// Defines the source of the fundus image to determine preprocessing routing
 enum ImageSourceType {
-  UPLOAD,
-  LIVE_HARDWARE,
+  upload,
+  liveHardware,
 }
 
 // -----------------------------------------------------------------------------
@@ -209,7 +208,7 @@ class ImageIngestionService {
       _runPreprocessPipeline,
       _PreprocessTaskParams(
         imageBytes: rawBytes,
-        isLiveHardware: source == ImageSourceType.LIVE_HARDWARE,
+        isLiveHardware: source == ImageSourceType.liveHardware,
       ),
     );
   }

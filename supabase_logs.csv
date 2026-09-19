@@ -1,0 +1,462 @@
+id,date,method,pathname,status,timestamp,level,event_message,log_type,log_count,logs,auth_user
+7be33105-c546-458e-9597-30e63674bfd3,"""2026-09-19T17:59:20.536Z""",,,00000,2026-09-19T17:59:20.536000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17609
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.patients)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:59:20.052Z",postgres,null,[],null
+25589f07-6123-4122-ae19-6e3ad7fd7451,"""2026-09-19T17:58:51.936Z""",,,23505,2026-09-19T17:58:51.936000,error,"duplicate key value violates unique constraint ""bucketid_objname""",postgres,null,[],null
+bcd7b080-c6b9-4d44-b2a2-efbc754a40d4,"""2026-09-19T17:58:51.887Z""",POST,/storage/v1/object/fundus-images/left_04f007de-f95f-44d1-be9e-f7af360018e3.jpg,400,2026-09-19T17:58:51.887000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/left_04f007de-f95f-44d1-be9e-f7af360018e3.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+fb47eecf-e2e7-4b04-a41c-a7b9f7df60dc,"""2026-09-19T17:58:51.790Z""",,,22P02,2026-09-19T17:58:51.790000,error,"invalid input syntax for type uuid: ""ASHA_MOBILE_01""",postgres,null,[],null
+588e3f95-d993-497e-8d1a-80e68bad0af6,"""2026-09-19T17:58:51.385Z""",POST,/rest/v1/patients,400,2026-09-19T17:58:51.385000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?on_conflict=local_id | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+0a741ed5-f758-4518-ac94-ed3b15797dd4,"""2026-09-19T17:48:44.405Z""",,,00000,2026-09-19T17:48:44.405000,success,"checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 2 recycled; write=0.208 s, sync=0.004 s, total=0.231 s; sync files=3, longest=0.003 s, average=0.002 s; distance=32768 kB, estimate=45365 kB; lsn=0/32000080, redo lsn=0/32000028",postgres,null,[],null
+5b8c3a64-af6a-47d9-b984-b491d80439c6,"""2026-09-19T17:48:44.175Z""",,,00000,2026-09-19T17:48:44.175000,success,checkpoint starting: time,postgres,null,[],null
+fcd0cbbd-8edb-42f2-a23b-116def350b39,"""2026-09-19T17:43:50.732Z""",,,23505,2026-09-19T17:43:50.732000,error,"duplicate key value violates unique constraint ""bucketid_objname""",postgres,null,[],null
+21e44e9b-fcb5-4096-bce0-e113b10b6cc4,"""2026-09-19T17:43:50.674Z""",POST,/storage/v1/object/fundus-images/left_04f007de-f95f-44d1-be9e-f7af360018e3.jpg,400,2026-09-19T17:43:50.674000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/left_04f007de-f95f-44d1-be9e-f7af360018e3.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+c79adb8a-4302-49b1-ae25-013787da4d52,"""2026-09-19T17:43:50.558Z""",,,22P02,2026-09-19T17:43:50.558000,error,"invalid input syntax for type uuid: ""ASHA_MOBILE_01""",postgres,null,[],null
+1ceeea96-2142-4e3d-8edc-a63952a7042a,"""2026-09-19T17:43:50.175Z""",POST,/rest/v1/patients,400,2026-09-19T17:43:50.175000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?on_conflict=local_id | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+56d2e3c0-d66f-40a1-b10a-2ed5b301702a,"""2026-09-19T17:38:45.635Z""",,,00000,2026-09-19T17:38:45.635000,success,"checkpoint complete: wrote 14 buffers (0.0%); 0 WAL file(s) added, 0 removed, 2 recycled; write=1.310 s, sync=0.004 s, total=1.331 s; sync files=12, longest=0.003 s, average=0.001 s; distance=32768 kB, estimate=46764 kB; lsn=0/30000080, redo lsn=0/30000028",postgres,null,[],null
+1c715241-2fee-49f8-9f19-38515ad6c872,"""2026-09-19T17:38:44.305Z""",,,00000,2026-09-19T17:38:44.305000,success,checkpoint starting: time,postgres,null,[],null
+18fb63aa-ef0d-4d86-a32c-ca691dc7fede,"""2026-09-19T17:36:17.096Z""",,,00000,2026-09-19T17:36:17.096000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17609
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.patients)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:36:16.616Z",postgres,null,[],null
+e6a5b8d0-5fff-4721-b5d2-9082945433cf,"""2026-09-19T17:33:50.942Z""",,,00000,2026-09-19T17:33:50.942000,success,"checkpoint complete: wrote 65 buffers (0.2%); 0 WAL file(s) added, 0 removed, 2 recycled; write=6.475 s, sync=0.004 s, total=6.505 s; sync files=54, longest=0.003 s, average=0.001 s; distance=32768 kB, estimate=48319 kB; lsn=0/2E000080, redo lsn=0/2E000028",postgres,null,[],null
+bff470ec-c104-4c35-af41-ed9195d41f8a,"""2026-09-19T17:33:44.438Z""",,,00000,2026-09-19T17:33:44.438000,success,checkpoint starting: time,postgres,null,[],null
+d0698135-223d-4f1a-8711-e8b898f24e12,"""2026-09-19T17:30:26.878Z""",,,00000,2026-09-19T17:30:26.878000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17609
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.patients)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:30:26.408Z",postgres,null,[],null
+e967bc00-2962-44e9-8cdf-5bb41e62c84e,"""2026-09-19T17:30:20.197Z""",,,00000,2026-09-19T17:30:20.197000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (select reltuples as estimate from pg_class where oid = 'auth.users'::regclass)
+select 
+  case 
+    when estimate = -1 then (select pg_temp.count_estimate('select * from auth.users'))::int
+    when estimate > 50000 then estimate::int
+    else (select count(*) from auth.users)
+  end as count,
+  estimate = -1 or estimate > 50000 as is_estimate
+from approximation
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:30:19.678Z",postgres,null,[],null
+eaba9c66-0451-47fa-a050-83b28817e1c9,"""2026-09-19T17:30:20.115Z""",,,00000,2026-09-19T17:30:20.115000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (select reltuples as estimate from pg_class where oid = 'auth.users'::regclass)
+select 
+  case 
+    when estimate = -1 then (select pg_temp.count_estimate('select * from auth.users'))::int
+    when estimate > 50000 then estimate::int
+    else (select count(*) from auth.users)
+  end as count,
+  estimate = -1 or estimate > 50000 as is_estimate
+from approximation
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:30:19.602Z",postgres,null,[],null
+310b6cd1-9490-4e7e-a80c-e2c5941a82c4,"""2026-09-19T17:30:12.442Z""",,,00000,2026-09-19T17:30:12.442000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17579
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.asha_workers)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:30:11.962Z",postgres,null,[],null
+e9904eaa-66fa-42f1-85eb-ceec51e7fcdb,"""2026-09-19T17:29:47.814Z""",GET,/rest/v1/patients,406,2026-09-19T17:29:47.814000,warning,GET | 406 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?select=id&local_id=eq.c3c9bd39-bf05-4e62-a458-d55f9f29a5ea | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+29d9bb6b-81ab-41bd-bfa0-a6862823fbd5,"""2026-09-19T17:29:47.696Z""",POST,/storage/v1/object/fundus-images/right_04f007de-f95f-44d1-be9e-f7af360018e3.jpg,200,2026-09-19T17:29:47.696000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/right_04f007de-f95f-44d1-be9e-f7af360018e3.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+5ebf9b81-3b5a-4c10-97ca-1508cf86c03f,"""2026-09-19T17:29:47.421Z""",POST,/storage/v1/object/fundus-images/left_04f007de-f95f-44d1-be9e-f7af360018e3.jpg,200,2026-09-19T17:29:47.421000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/left_04f007de-f95f-44d1-be9e-f7af360018e3.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+763b4f59-ec5c-460f-aab1-52bb8bbca67e,"""2026-09-19T17:29:47.335Z""",,,22P02,2026-09-19T17:29:47.335000,error,"invalid input syntax for type uuid: ""ASHA_MOBILE_01""",postgres,null,[],null
+3d0fae49-d6c5-4ff0-9cd3-3786ef8c3a7c,"""2026-09-19T17:29:46.898Z""",POST,/rest/v1/patients,400,2026-09-19T17:29:46.898000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?on_conflict=local_id | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+65903627-2bca-442a-9fb4-58e83405d049,"""2026-09-19T17:29:00.145Z""",POST,/auth/v1/token,200,2026-09-19T17:29:00.145000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/token?grant_type=password | Dart/3.13 (dart:io),edge,null,[],null
+2aee50e9-0aaa-47ec-89a3-de921846b6be,"""2026-09-19T17:08:45.277Z""",,,00000,2026-09-19T17:08:45.277000,success,"checkpoint complete: wrote 14 buffers (0.0%); 0 WAL file(s) added, 0 removed, 2 recycled; write=1.313 s, sync=0.005 s, total=1.336 s; sync files=13, longest=0.004 s, average=0.001 s; distance=32768 kB, estimate=50047 kB; lsn=0/2C000080, redo lsn=0/2C000028",postgres,null,[],null
+b2c55350-4d94-47bb-8885-796828e9c32f,"""2026-09-19T17:08:43.941Z""",,,00000,2026-09-19T17:08:43.941000,success,checkpoint starting: time,postgres,null,[],null
+a342ed39-c8ed-4fbc-88c7-8794ab732ed1,"""2026-09-19T17:05:33.847Z""",,,00000,2026-09-19T17:05:33.847000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17579
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.asha_workers)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:05:33.375Z",postgres,null,[],null
+8ff1e114-f138-4bd4-a738-53d3a99d31ad,"""2026-09-19T17:03:46.644Z""",,,00000,2026-09-19T17:03:46.644000,success,"checkpoint complete: wrote 36 buffers (0.1%); 0 WAL file(s) added, 0 removed, 3 recycled; write=3.528 s, sync=0.004 s, total=3.567 s; sync files=32, longest=0.004 s, average=0.001 s; distance=49152 kB, estimate=51967 kB; lsn=0/2A0000B8, redo lsn=0/2A000028",postgres,null,[],null
+281b0873-86ee-4bcf-a0ad-4a807091d0ff,"""2026-09-19T17:03:43.078Z""",,,00000,2026-09-19T17:03:43.078000,success,checkpoint starting: time,postgres,null,[],null
+36c2d3eb-e281-44d4-8af0-1b40a094c1d5,"""2026-09-19T17:02:03.546Z""",,,00000,2026-09-19T17:02:03.546000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17579
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.asha_workers)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:02:03.077Z",postgres,null,[],null
+eb94c925-e586-443c-ab6e-abcd348733c4,"""2026-09-19T17:01:31.403Z""",,,00000,2026-09-19T17:01:31.403000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17579
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.asha_workers)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:01:30.913Z",postgres,null,[],null
+1f3de51a-c849-4b06-bd5b-663402fa4626,"""2026-09-19T17:01:28.147Z""",,,00000,2026-09-19T17:01:28.147000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17624
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.screenings)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:01:27.660Z",postgres,null,[],null
+b35f1c6b-be76-4a43-aeef-9191b71629e1,"""2026-09-19T17:01:12.648Z""",,,00000,2026-09-19T17:01:12.648000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (select reltuples as estimate from pg_class where oid = 'auth.users'::regclass)
+select 
+  case 
+    when estimate = -1 then (select pg_temp.count_estimate('select * from auth.users'))::int
+    when estimate > 50000 then estimate::int
+    else (select count(*) from auth.users)
+  end as count,
+  estimate = -1 or estimate > 50000 as is_estimate
+from approximation
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:01:12.171Z",postgres,null,[],null
+dc04ac48-21ba-49f2-a698-b2c462ab532c,"""2026-09-19T17:01:12.577Z""",,,00000,2026-09-19T17:01:12.577000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (select reltuples as estimate from pg_class where oid = 'auth.users'::regclass)
+select 
+  case 
+    when estimate = -1 then (select pg_temp.count_estimate('select * from auth.users'))::int
+    when estimate > 50000 then estimate::int
+    else (select count(*) from auth.users)
+  end as count,
+  estimate = -1 or estimate > 50000 as is_estimate
+from approximation
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:01:12.115Z",postgres,null,[],null
+9c707dd9-7b62-44bc-a387-df24e71f5db9,"""2026-09-19T17:01:11.471Z""",POST,/auth/v1/admin/users,200,2026-09-19T17:01:11.471000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/admin/users | @supabase-infra/mgmt-api/v1.321.3,edge,null,[],null
+ccfd7264-7af4-418a-ad4f-4d92231cc1bc,"""2026-09-19T17:01:04.258Z""",POST,/auth/v1/admin/users,422,2026-09-19T17:01:04.258000,warning,POST | 422 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/admin/users | @supabase-infra/mgmt-api/v1.321.3,edge,null,[],null
+81522acf-965f-489a-aa0b-eff4f5fff2f1,"""2026-09-19T17:00:20.411Z""",,,00000,2026-09-19T17:00:20.411000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (select reltuples as estimate from pg_class where oid = 'auth.users'::regclass)
+select 
+  case 
+    when estimate = -1 then (select pg_temp.count_estimate('select * from auth.users'))::int
+    when estimate > 50000 then estimate::int
+    else (select count(*) from auth.users)
+  end as count,
+  estimate = -1 or estimate > 50000 as is_estimate
+from approximation
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:00:19.919Z",postgres,null,[],null
+c57638c9-9100-4cf8-ac51-ef435cfa97b7,"""2026-09-19T17:00:20.165Z""",,,00000,2026-09-19T17:00:20.165000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (select reltuples as estimate from pg_class where oid = 'auth.users'::regclass)
+select 
+  case 
+    when estimate = -1 then (select pg_temp.count_estimate('select * from auth.users'))::int
+    when estimate > 50000 then estimate::int
+    else (select count(*) from auth.users)
+  end as count,
+  estimate = -1 or estimate > 50000 as is_estimate
+from approximation
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:00:19.687Z",postgres,null,[],null
+3193732a-f8fb-4203-b5ea-4fe110403ec6,"""2026-09-19T17:00:15.810Z""",,,00000,2026-09-19T17:00:15.810000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17624
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.screenings)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-19T17:00:15.328Z",postgres,null,[],null
