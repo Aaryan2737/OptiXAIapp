@@ -1,0 +1,65 @@
+# Env and Secrets
+.env
+.env.*
+*.pem
+secrets/
+
+# Next.js / Node
+node_modules/
+.next/
+out/
+build/
+.vercel
+npm-debug.log*
+
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+/build/
+optixai_flutter_app/build/
+*.apk
+*.aab
+*.keystore
+
+# Android/Gradle
+.gradle/
+*.class
+
+# iOS
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.xcworkspace/
+*.xcuserstate
+
+# Python / FastAPI / Machine Learning
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env/
+env/
+*.pt
+*.pth
+*.h5
+# Only exclude large models in the root, but we might want to keep the final tflite model.
+# Just explicitly ignoring huge datasets to be safe
+dataset/
+images/
+archive.zip
+*.zip
+
+# VS Code / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+*.npy
+
