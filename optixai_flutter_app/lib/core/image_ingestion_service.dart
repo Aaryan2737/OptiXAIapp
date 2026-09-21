@@ -218,11 +218,7 @@ class ImageIngestionService {
     cv.Mat? img;
     cv.Mat? gray;
     cv.Mat? thresh;
-    cv.Mat? mask;
-    cv.Mat? maskedImg;
-    cv.Mat? glareGray;
-    cv.Mat? glareMask;
-    cv.Mat? glareKernel;
+
     cv.Mat? lab;
     cv.Mat? resized;
 
@@ -231,30 +227,8 @@ class ImageIngestionService {
       img = cv.imdecode(params.imageBytes, cv.IMREAD_COLOR);
       if (img.isEmpty) throw Exception('Failed to decode image bytes.');
 
-      // ==========================================================
-      // 2. Y-SHAPED PIPELINE: Branch-Specific Preprocessing
-      // ==========================================================
-      if (params.isLiveHardware) {
-        // A. Mask adapter ring (Hardware condensation lens artifact)
-        mask = cv.Mat.zeros(img.rows, img.cols, cv.MatType.CV_8UC1);
-        final center = cv.Point(img.cols ~/ 2, img.rows ~/ 2);
-        final radius = (img.cols < img.rows ? img.cols : img.rows) ~/ 2;
-        cv.circle(mask, center, radius, cv.Scalar.all(255), thickness: -1);
-        maskedImg = cv.bitwiseAND(img, img, mask: mask);
-        img.dispose();
-        img = maskedImg;
-        maskedImg = null; // Prevent double-dispose
-
-        // B. Fast Glare Mitigation (Corneal Reflection)
-        glareGray = cv.cvtColor(img, cv.COLOR_BGR2GRAY);
-        glareMask = cv.threshold(glareGray, 240, 255, cv.THRESH_BINARY).$2;
-        glareKernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5));
-        glareMask = cv.dilate(glareMask, glareKernel);
-        final inpainted = cv.inpaint(img, glareMask, 3.0, cv.INPAINT_TELEA);
-        img.dispose();
-        img = inpainted;
-      }
-      // UPLOAD branch explicitly bypasses the above hardware artifact logic
+      // Branch-specific processing has been removed. Both Upload and Hardware
+      // now use the identical converged pipeline to prevent inference domain shift.
 
       // ==========================================================
       // 3. COMMON CONVERGENCE PIPELINE (Crucial for AI Accuracy)
@@ -262,7 +236,7 @@ class ImageIngestionService {
 
       // A. Contour Auto-Crop
       gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY);
-      thresh = cv.threshold(gray, 10, 255, cv.THRESH_BINARY).$2;
+      thresh = cv.threshold(gray, 20, 255, cv.THRESH_BINARY).$2;
       final contours = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE).$1;
 
       if (contours.isNotEmpty) {
@@ -310,7 +284,10 @@ class ImageIngestionService {
       final rgb = cv.cvtColor(resized, cv.COLOR_BGR2RGB);
 
       // F. Extract raw uint8 pixels in NHWC format
-      // No normalization needed — TFLite model expects raw pixels [0-255]
+      // NOTE: these are RAW 0-255 bytes. Normalization happens later, in
+      // OptiXAIEngine._normalizePixel() in edge_inference.dart — see the
+      // CONFIRMED MODEL CONTRACT comment at the top of that file.
+      // Do not normalize here — do not change this function to output floats. [0-255]
       final Uint8List result = Uint8List.fromList(rgb.data);
       rgb.dispose();
 
@@ -320,10 +297,7 @@ class ImageIngestionService {
       img?.dispose();
       gray?.dispose();
       thresh?.dispose();
-      mask?.dispose();
-      glareGray?.dispose();
-      glareMask?.dispose();
-      glareKernel?.dispose();
+
       lab?.dispose();
       resized?.dispose();
     }

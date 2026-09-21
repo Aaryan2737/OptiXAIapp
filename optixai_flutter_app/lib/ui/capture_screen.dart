@@ -111,6 +111,10 @@ class _CaptureScreenState extends State<CaptureScreen> with TickerProviderStateM
       
       final isUrgent = (leftResult['is_urgent_refer'] as bool) || (rightResult['is_urgent_refer'] as bool);
       
+      final double maxConfidence = (leftResult['confidence_score'] as double) > (rightResult['confidence_score'] as double) 
+          ? (leftResult['confidence_score'] as double) 
+          : (rightResult['confidence_score'] as double);
+      
       try {
         await LocalDatabase.instance.insertScreening({
           'local_id': localId,
@@ -119,6 +123,7 @@ class _CaptureScreenState extends State<CaptureScreen> with TickerProviderStateM
           'right_eye_local_path': rightImagePath,
           'left_eye_grade': leftResult['dr_grade'],
           'right_eye_grade': rightResult['dr_grade'],
+          'ai_confidence_score': maxConfidence,
           'is_urgent_refer': isUrgent ? 1 : 0,
           'thresholds_version': 'v1.0.0',
           'sync_status': 'pending',
@@ -371,7 +376,7 @@ class _CaptureScreenState extends State<CaptureScreen> with TickerProviderStateM
                 final pickedFile = await picker.pickImage(source: ImageSource.gallery);
                 if (pickedFile != null) {
                   final bytes = await pickedFile.readAsBytes();
-                  _onPhotoTaken(bytes, ImageSourceType.upload);
+                  await _onPhotoTaken(bytes, ImageSourceType.upload);
                 }
               },
             ),

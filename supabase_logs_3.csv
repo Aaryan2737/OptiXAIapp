@@ -1,0 +1,132 @@
+id,date,method,pathname,status,timestamp,level,event_message,log_type,log_count,logs,auth_user
+52789b5b-75df-4ccd-9758-f009f40af688,"""2026-09-21T09:11:11.549Z""",GET,/storage/v1/bucket/fundus-images,200,2026-09-21T09:11:11.549000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/bucket/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+90f2888f-969d-43bd-8c48-2ae5f1866d0d,"""2026-09-21T09:06:35.156Z""",,,00000,2026-09-21T09:06:35.156000,success,"checkpoint complete: wrote 70 buffers (0.2%); 0 WAL file(s) added, 0 removed, 3 recycled; write=6.836 s, sync=0.004 s, total=6.860 s; sync files=55, longest=0.003 s, average=0.001 s; distance=49152 kB, estimate=49152 kB; lsn=0/A30000F0, redo lsn=0/A3000060",postgres,null,[],null
+924a628f-192f-4490-8dd9-438a5bac1c29,"""2026-09-21T09:06:28.298Z""",,,00000,2026-09-21T09:06:28.298000,success,checkpoint starting: time,postgres,null,[],null
+1de0e5a8-62cb-414e-8eb4-f674a8f83d46,"""2026-09-21T09:05:54.914Z""",GET,/storage/v1/bucket/fundus-images,200,2026-09-21T09:05:54.914000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/bucket/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+4f960529-6863-4030-9430-28e8b83601ec,"""2026-09-21T09:05:20.017Z""",POST,/storage/v1/object/list/fundus-images,200,2026-09-21T09:05:20.017000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/list/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+4c45ff1e-4346-4478-a5d2-5b66019a44f5,"""2026-09-21T09:05:19.503Z""",POST,/storage/v1/object/fundus-images/.emptyFolderPlaceholder,200,2026-09-21T09:05:19.503000,success,"POST | 200 | https://ceuvbmchntjytouatigz.storage.supabase.co/storage/v1/object/fundus-images/.emptyFolderPlaceholder | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",edge,null,[],null
+74cb0b78-3e77-41cb-9a92-1315a0c8da07,"""2026-09-21T09:05:19.301Z""",OPTIONS,/storage/v1/object/fundus-images/.emptyFolderPlaceholder,200,2026-09-21T09:05:19.301000,success,"OPTIONS | 200 | https://ceuvbmchntjytouatigz.storage.supabase.co/storage/v1/object/fundus-images/.emptyFolderPlaceholder | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",edge,null,[],null
+99556cf4-073a-45bb-a07d-530816ed217d,"""2026-09-21T09:05:18.202Z""",POST,/storage/v1/object/list/fundus-images,200,2026-09-21T09:05:18.202000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/list/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+95987a77-9a16-496c-9387-8a0de1479089,"""2026-09-21T09:05:16.626Z""",DELETE,/storage/v1/object/fundus-images,200,2026-09-21T09:05:16.626000,success,DELETE | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+eb830edd-b895-4b59-846a-6d3d3228264e,"""2026-09-21T09:05:02.070Z""",GET,/storage/v1/object/sign/fundus-images/left_2e774963-1710-400b-a62a-26b630a9b8fe.jpg,200,2026-09-21T09:05:02.070000,success,"GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/left_2e774963-1710-400b-a62a-26b630a9b8fe.jpg?token=eyJraWQiOiJlMjBiYjA2OC0xZGQyLTRkOGQtODg5OC1jODQwMWZkNDM1N2EiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJmdW5kdXMtaW1hZ2VzL2xlZnRfMmU3NzQ5NjMtMTcxMC00MDBiLWE2MmEtMjZiNjMwYTliOGZlLmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODk5ODE1MDEsImV4cCI6MTc5MDU4NjMwMX0.zY9JzxWeLDihJk8P4ligoGLZiV7gsY07hNU9pHjL8QnlEN6ojSbNFHGXy_yaR56SJGWr6mNjB9RHlAkeVQ1fdA | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",edge,null,[],null
+a86af2cc-ee8b-4b14-a7af-4c8cb6660463,"""2026-09-21T09:05:01.703Z""",POST,/storage/v1/object/sign/fundus-images/left_2e774963-1710-400b-a62a-26b630a9b8fe.jpg,200,2026-09-21T09:05:01.703000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/left_2e774963-1710-400b-a62a-26b630a9b8fe.jpg | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+53ef67bc-63c2-48c9-865f-1467a9a91b55,"""2026-09-21T09:04:58.360Z""",GET,/storage/v1/object/sign/fundus-images/right_aa19a794-93e7-4567-ac3a-835255148bb7.jpg,200,2026-09-21T09:04:58.360000,success,"GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/right_aa19a794-93e7-4567-ac3a-835255148bb7.jpg?token=eyJraWQiOiJlMjBiYjA2OC0xZGQyLTRkOGQtODg5OC1jODQwMWZkNDM1N2EiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJmdW5kdXMtaW1hZ2VzL3JpZ2h0X2FhMTlhNzk0LTkzZTctNDU2Ny1hYzNhLTgzNTI1NTE0OGJiNy5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg5OTgxNDk4LCJleHAiOjE3OTA1ODYyOTh9.J7URv9gHt3EZvOvVaK6mvRpieW_siQ3Sdm6z9UBWtpGfDQwwDRN1kSkKxiF_znLRfvIadAgWL3tLZKtA9A0rDg | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",edge,null,[],null
+d9cba798-203e-46bc-a3e0-0c1ca8c588c9,"""2026-09-21T09:04:57.987Z""",POST,/storage/v1/object/sign/fundus-images/right_aa19a794-93e7-4567-ac3a-835255148bb7.jpg,200,2026-09-21T09:04:57.987000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/right_aa19a794-93e7-4567-ac3a-835255148bb7.jpg | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+2aba67a1-4886-42b6-862d-621fdeb50474,"""2026-09-21T09:04:54.068Z""",GET,/storage/v1/object/sign/fundus-images/right_fa201995-9867-4033-95fc-4e332528bb64.jpg,200,2026-09-21T09:04:54.068000,success,"GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/right_fa201995-9867-4033-95fc-4e332528bb64.jpg?token=eyJraWQiOiJlMjBiYjA2OC0xZGQyLTRkOGQtODg5OC1jODQwMWZkNDM1N2EiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJmdW5kdXMtaW1hZ2VzL3JpZ2h0X2ZhMjAxOTk1LTk4NjctNDAzMy05NWZjLTRlMzMyNTI4YmI2NC5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg5OTgxNDkzLCJleHAiOjE3OTA1ODYyOTN9.brtsK_6VGFQZadi1NTNmhJfRr00AHexw7E3mStdhXVuW7sKv--q9Q1zgbYvowBJwJ9DkxMuH7wy5hUk9v6mjJw | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",edge,null,[],null
+cc6ee9e5-0b5f-41bc-bb50-835d2d1059cf,"""2026-09-21T09:04:53.760Z""",POST,/storage/v1/object/sign/fundus-images/right_fa201995-9867-4033-95fc-4e332528bb64.jpg,200,2026-09-21T09:04:53.760000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/right_fa201995-9867-4033-95fc-4e332528bb64.jpg | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+0e8ebaeb-0fba-4950-8442-9b7bdb865b2a,"""2026-09-21T09:04:47.304Z""",GET,/storage/v1/object/sign/fundus-images/left_036abd8f-ab9b-42ae-abdf-b546a864f368.jpg,200,2026-09-21T09:04:47.304000,success,"GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/left_036abd8f-ab9b-42ae-abdf-b546a864f368.jpg?token=eyJraWQiOiJlMjBiYjA2OC0xZGQyLTRkOGQtODg5OC1jODQwMWZkNDM1N2EiLCJhbGciOiJIUzUxMiJ9.eyJ1cmwiOiJmdW5kdXMtaW1hZ2VzL2xlZnRfMDM2YWJkOGYtYWI5Yi00MmFlLWFiZGYtYjU0NmE4NjRmMzY4LmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODk5ODE0ODYsImV4cCI6MTc5MDU4NjI4Nn0._RHZfLBmrcI8p8l-2FDjVEh7Vx2gPB9HdsS5Q4pShk6oTjLw4IxJ7gDfUaeRoTKRi0FR5CG_F38KzchX5Et-dA | Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",edge,null,[],null
+d5df2568-0c07-430e-b550-202f9bcec73b,"""2026-09-21T09:04:46.896Z""",POST,/storage/v1/object/sign/fundus-images/left_036abd8f-ab9b-42ae-abdf-b546a864f368.jpg,200,2026-09-21T09:04:46.896000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/sign/fundus-images/left_036abd8f-ab9b-42ae-abdf-b546a864f368.jpg | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+305f2718-1e6b-4161-bfcf-77d9feec2b23,"""2026-09-21T09:04:40.883Z""",POST,/storage/v1/object/list/fundus-images,200,2026-09-21T09:04:40.883000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/list/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+218c2b61-83c8-4ba7-9c6d-b6fe09fea683,"""2026-09-21T09:04:39.914Z""",GET,/storage/v1/bucket/fundus-images,200,2026-09-21T09:04:39.914000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/bucket/fundus-images | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+57cd6d5f-8b05-48a7-acae-95f9b97a1b58,"""2026-09-21T09:04:36.973Z""",GET,/storage/v1/bucket,200,2026-09-21T09:04:36.973000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/bucket?limit=100&offset=0&sortColumn=created_at&sortOrder=desc | @supabase-infra/mgmt-api/v1.332.0,edge,null,[],null
+58efa16a-4800-4967-b7c1-5551b9cd067e,"""2026-09-21T09:04:19.297Z""",,,00000,2026-09-21T09:04:19.297000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17624
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.screenings)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-21T09:04:18.829Z",postgres,null,[],null
+b2b575f8-cd05-41e2-8a88-5dcf0bdc3513,"""2026-09-21T09:04:13.443Z""",,,00000,2026-09-21T09:04:13.443000,success,"statement: SET statement_timeout='58s'; SET idle_session_timeout='58s';
+
+CREATE OR REPLACE FUNCTION pg_temp.count_estimate(
+    query text
+) RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE
+    plan jsonb;
+BEGIN
+    EXECUTE 'EXPLAIN (FORMAT JSON)' || query INTO plan;
+    RETURN plan->0->'Plan'->'Plan Rows';
+END;
+$$;
+
+
+with approximation as (
+    select reltuples as estimate
+    from pg_class
+    where oid = 17609
+)
+select 
+  case 
+    when estimate > 50000 then estimate
+    else (select count(*) from public.patients)
+  end as count,
+  estimate > 50000 as is_estimate
+from approximation;
+
+
+-- source: dashboard
+-- user: session:2bbd0080-c543-41ec-8271-e17a615330c7
+-- date: 2026-09-21T09:04:12.981Z",postgres,null,[],null
+cab821e1-48bf-47bf-96b7-188047236be0,"""2026-09-21T09:03:28.627Z""",,,42501,2026-09-21T09:03:28.627000,error,"new row violates row-level security policy (USING expression) for table ""objects""",postgres,null,[],null
+0f8b43eb-2d40-418f-8154-3c4713cc4a11,"""2026-09-21T09:03:28.599Z""",POST,/storage/v1/object/fundus-images/left_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg,400,2026-09-21T09:03:28.599000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/left_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+095920ee-5702-468c-91c6-92c447ceda88,"""2026-09-21T09:03:28.530Z""",,,42501,2026-09-21T09:03:28.530000,error,"new row violates row-level security policy for table ""patients""",postgres,null,[],null
+da270770-5770-4f1b-8aef-2dc8411a9d35,"""2026-09-21T09:03:28.518Z""",POST,/rest/v1/patients,403,2026-09-21T09:03:28.518000,warning,POST | 403 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?on_conflict=local_id | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+012bb12c-63c8-4d09-a09a-232fb7727ff9,"""2026-09-21T09:03:27.580Z""",,,42501,2026-09-21T09:03:27.580000,error,"new row violates row-level security policy (USING expression) for table ""objects""",postgres,null,[],null
+78891ca1-3b5c-4b4a-9c89-ab1faee36790,"""2026-09-21T09:03:27.546Z""",POST,/storage/v1/object/fundus-images/left_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg,400,2026-09-21T09:03:27.546000,warning,POST | 400 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/left_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+80c37b17-bb6f-40bc-87d3-3c59e8a7737d,"""2026-09-21T09:03:27.463Z""",,,42501,2026-09-21T09:03:27.463000,error,"new row violates row-level security policy for table ""patients""",postgres,null,[],null
+2804c6a5-ef69-4aed-8f0d-3fa3756d6683,"""2026-09-21T09:03:27.289Z""",POST,/rest/v1/patients,403,2026-09-21T09:03:27.289000,warning,POST | 403 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?on_conflict=local_id | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+0839c541-5d97-4540-ac07-59444af142a3,"""2026-09-21T09:03:20.259Z""",GET,/rest/v1/patients,200,2026-09-21T09:03:20.259000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?select=id&local_id=eq.720bc74f-a537-4da3-885c-73f66fb15e18&limit=1 | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+9d13611c-e1c2-4ecd-a48d-80c3177be137,"""2026-09-21T09:03:20.070Z""",POST,/storage/v1/object/fundus-images/right_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg,200,2026-09-21T09:03:20.070000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/right_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+ece0ef3f-c0fa-4a8d-b020-fae46264620a,"""2026-09-21T09:03:19.332Z""",POST,/storage/v1/object/fundus-images/left_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg,200,2026-09-21T09:03:19.332000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/storage/v1/object/fundus-images/left_488004fc-8a0e-4160-b91d-91f5c5a1d3ed.jpg | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+150b9d9a-109e-490e-9c42-6c84faef98f7,"""2026-09-21T09:03:19.131Z""",,,42501,2026-09-21T09:03:19.131000,error,"new row violates row-level security policy for table ""patients""",postgres,null,[],null
+45853811-3520-4d4a-8864-428f621c950d,"""2026-09-21T09:03:18.781Z""",POST,/rest/v1/patients,403,2026-09-21T09:03:18.781000,warning,POST | 403 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/patients?on_conflict=local_id | Dart/3.13 (dart:io),edge,null,[],1706ccc8-49a4-487b-89d1-52057927247c
+21b2f124-7476-4b02-888f-b60fe3039ef0,"""2026-09-21T09:02:02.827Z""",POST,/auth/v1/token,200,2026-09-21T09:02:02.827000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/token?grant_type=refresh_token | Dart/3.13 (dart:io),edge,null,[],null
+2364f51e-f75e-4fa4-a867-0046eb2581e2,"""2026-09-21T09:01:58.997Z""",POST,/auth/v1/token,200,2026-09-21T09:01:58.997000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/token?grant_type=password | Dart/3.13 (dart:io),edge,null,[],null
+5f31142a-9d8f-46d5-a5b1-82a8884d08cb,"""2026-09-21T09:01:29.941Z""",,,00000,2026-09-21T09:01:29.941000,success,"checkpoint complete: wrote 14 buffers (0.0%); 0 WAL file(s) added, 0 removed, 2 recycled; write=1.398 s, sync=0.004 s, total=1.430 s; sync files=14, longest=0.003 s, average=0.001 s; distance=32768 kB, estimate=33629 kB; lsn=0/A0000080, redo lsn=0/A0000028",postgres,null,[],null
+e489c59b-c309-4ce4-9dbb-1627ee17ae95,"""2026-09-21T09:01:28.514Z""",,,00000,2026-09-21T09:01:28.514000,success,checkpoint starting: time,postgres,null,[],null
+94f66a1c-ee23-4f98-9c9b-cbe1a01659cc,"""2026-09-21T09:00:27.164Z""",,,42703,2026-09-21T09:00:27.164000,error,column screenings.left_eye_grade does not exist,postgres,null,[],null
+7b190add-42bd-4329-8831-300a5f596143,"""2026-09-21T09:00:27.043Z""",GET,/rest/v1/screenings,400,2026-09-21T09:00:27.043000,warning,GET | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/screenings?select=id%2Cleft_eye_grade%2Cright_eye_grade%2Cscreened_at%2Cpatients%28full_name%2Ccontact_number%2Casha_workers%28full_name%2Cassigned_district%29%29&is_urgent_refer=eq.true&order=screened_at.desc | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+5be8e904-5831-4e85-90e0-920d6d21f11e,"""2026-09-21T09:00:26.558Z""",,,42703,2026-09-21T09:00:26.558000,error,column screenings.left_eye_grade does not exist,postgres,null,[],null
+d311249f-690f-4351-900f-d7d752054236,"""2026-09-21T09:00:26.364Z""",GET,/auth/v1/user,200,2026-09-21T09:00:26.364000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+5272438d-811c-4dd2-87db-51b7d32cc7ac,"""2026-09-21T09:00:26.224Z""",GET,/auth/v1/user,200,2026-09-21T09:00:26.224000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+911e14f7-7560-414f-b662-fdf02962c0f1,"""2026-09-21T09:00:26.033Z""",,,42703,2026-09-21T09:00:26.033000,error,column screenings.left_eye_grade does not exist,postgres,null,[],null
+36f41bbc-31a0-457b-a743-052a41a865d3,"""2026-09-21T09:00:26.019Z""",GET,/rest/v1/screenings,400,2026-09-21T09:00:26.019000,warning,GET | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/screenings?select=id%2Cleft_eye_grade%2Cright_eye_grade%2Cscreened_at%2Cpatients%28full_name%2Ccontact_number%2Casha_workers%28full_name%2Cassigned_district%29%29&is_urgent_refer=eq.true&order=screened_at.desc | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+4042b65e-a962-44e8-a865-8a27ce3f63af,"""2026-09-21T09:00:25.938Z""",GET,/rest/v1/screenings,400,2026-09-21T09:00:25.938000,warning,GET | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/screenings?select=id%2Cleft_eye_grade%2Cright_eye_grade%2Cscreened_at%2Cpatients%28full_name%2Ccontact_number%2Casha_workers%28full_name%2Cassigned_district%29%29&is_urgent_refer=eq.true&order=screened_at.desc | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+f1be665f-3765-4b02-b05b-c911d87ab75b,"""2026-09-21T09:00:25.710Z""",GET,/auth/v1/user,200,2026-09-21T09:00:25.710000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+27932168-e4f2-4c45-84de-afcfc8191947,"""2026-09-21T09:00:25.569Z""",GET,/auth/v1/user,200,2026-09-21T09:00:25.569000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+3ece82a5-6574-4dc9-aed7-23e50e51076f,"""2026-09-21T09:00:25.325Z""",GET,/auth/v1/user,200,2026-09-21T09:00:25.325000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+ced741e4-2487-4801-83d1-d3e28faaaa54,"""2026-09-21T09:00:25.155Z""",GET,/auth/v1/user,200,2026-09-21T09:00:25.155000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+f10109e3-8d9f-4519-b735-8ee1316c0d67,"""2026-09-21T09:00:24.163Z""",,,42703,2026-09-21T09:00:24.163000,error,column screenings.left_eye_grade does not exist,postgres,null,[],null
+267232cd-94f4-4558-8a2c-9313e2f28cb5,"""2026-09-21T09:00:23.600Z""",GET,/rest/v1/screenings,400,2026-09-21T09:00:23.600000,warning,GET | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/screenings?select=id%2Cleft_eye_grade%2Cright_eye_grade%2Cscreened_at%2Cpatients%28full_name%2Ccontact_number%2Casha_workers%28full_name%2Cassigned_district%29%29&is_urgent_refer=eq.true&order=screened_at.desc | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+3e885ed4-5c96-4896-9c34-5b370f69ade4,"""2026-09-21T09:00:22.960Z""",GET,/auth/v1/user,200,2026-09-21T09:00:22.960000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+171a4253-fae7-4f90-be9f-a3d189e07e5b,"""2026-09-21T09:00:22.767Z""",GET,/auth/v1/user,200,2026-09-21T09:00:22.767000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+fded216c-bd75-4414-afcf-fc30804d3ea3,"""2026-09-21T09:00:20.213Z""",GET,/auth/v1/user,200,2026-09-21T09:00:20.213000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+ee12d66d-424d-4fe8-9d08-fde7b63f8f2a,"""2026-09-21T09:00:19.801Z""",GET,/auth/v1/user,200,2026-09-21T09:00:19.801000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+12eb3038-f1e3-4b4d-835f-a895cdca56cf,"""2026-09-21T09:00:19.760Z""",GET,/auth/v1/user,200,2026-09-21T09:00:19.760000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+3aad229e-c9c9-4e43-920b-70a18da14683,"""2026-09-21T09:00:19.109Z""",,,42703,2026-09-21T09:00:19.109000,error,column screenings.left_eye_grade does not exist,postgres,null,[],null
+8af33b29-70da-4608-825f-6435a5ee2407,"""2026-09-21T09:00:18.806Z""",GET,/rest/v1/screenings,400,2026-09-21T09:00:18.806000,warning,GET | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/screenings?select=id%2Cleft_eye_grade%2Cright_eye_grade%2Cis_urgent_refer%2Cscreened_at%2Cpatients%28asha_worker_id%29 | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+0af2c611-1510-47cc-a2c5-7db40ccb2da7,"""2026-09-21T09:00:18.062Z""",GET,/auth/v1/user,200,2026-09-21T09:00:18.062000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+8a32a602-d4cb-408e-bf0b-0617cc69e013,"""2026-09-21T09:00:17.880Z""",GET,/auth/v1/user,200,2026-09-21T09:00:17.880000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+fbcc497c-8f2c-43b1-b872-bf18e671590c,"""2026-09-21T09:00:16.308Z""",GET,/auth/v1/user,200,2026-09-21T09:00:16.308000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+3684b00b-a522-4a5c-953e-8e461aec16e7,"""2026-09-21T09:00:15.184Z""",GET,/auth/v1/user,200,2026-09-21T09:00:15.184000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+7eeaae73-9f28-47ee-b70b-24374a109b5a,"""2026-09-21T09:00:14.967Z""",GET,/auth/v1/user,200,2026-09-21T09:00:14.967000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+9a173390-33fd-482e-9f93-923185a936a2,"""2026-09-21T08:57:33.098Z""",,,42703,2026-09-21T08:57:33.098000,error,column screenings.left_eye_grade does not exist,postgres,null,[],null
+a4d9ff94-4e2d-4b87-8061-ef356b141dd6,"""2026-09-21T08:57:32.491Z""",GET,/rest/v1/screenings,400,2026-09-21T08:57:32.491000,warning,GET | 400 | https://ceuvbmchntjytouatigz.supabase.co/rest/v1/screenings?select=id%2Cleft_eye_grade%2Cright_eye_grade%2Cis_urgent_refer%2Cscreened_at%2Cpatients%28asha_worker_id%29 | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+19a5fcaa-ebb3-4423-8424-143efda2f53d,"""2026-09-21T08:57:31.745Z""",GET,/auth/v1/user,200,2026-09-21T08:57:31.745000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | node,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+a642a30b-023c-4172-bfa0-1047b6c69cee,"""2026-09-21T08:57:30.687Z""",GET,/auth/v1/user,200,2026-09-21T08:57:30.687000,success,GET | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/user | Vercel Edge Functions,edge,null,[],a5cf291c-a3eb-4db0-81e9-486dbfbc82cb
+d6f5f7e6-b655-4123-ae9f-841bd93cbce1,"""2026-09-21T08:57:30.160Z""",POST,/auth/v1/token,200,2026-09-21T08:57:30.160000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/auth/v1/token?grant_type=refresh_token | Vercel Edge Functions,edge,null,[],null
+adefb3dc-17e0-447e-9aa8-6388f4a1bd5c,"""2026-09-21T08:56:54.796Z""",POST,/admin/v1/network-bans/retrieve,200,2026-09-21T08:56:54.796000,success,POST | 200 | https://ceuvbmchntjytouatigz.supabase.co/admin/v1/network-bans/retrieve | @supabase-infra/mgmt-api/v1.321.3,edge,null,[],null

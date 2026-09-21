@@ -42,13 +42,37 @@ class SyncService {
     final db = LocalDatabase.instance;
     final supabase = Supabase.instance.client;
 
+    final ashaUser = supabase.auth.currentUser;
+    if (ashaUser == null) {
+      print("Cannot sync: User not logged in.");
+      return;
+    }
+
+    // Lookup public ASHA worker ID to satisfy RLS
+    final workerRes = await supabase
+        .from('asha_workers')
+        .select('id')
+        .eq('auth_uid', ashaUser.id)
+        .maybeSingle();
+
+    if (workerRes == null) {
+      print("Cannot sync: ASHA worker profile not found for current user.");
+      return;
+    }
+    
+    final ashaWorkerId = workerRes['id'] as String;
+
     // 1. Sync Patients
     final pendingPatients = await db.getPendingPatients();
     for (var p in pendingPatients) {
+      if ((p['sync_attempts'] as int? ?? 0) >= 50) {
+        print("Patient ${p['local_id']} exceeded sync retry limit — needs manual attention.");
+        continue;
+      }
       try {
         final payload = {
           'local_id': p['local_id'],
-          'asha_worker_id': supabase.auth.currentUser!.id,
+          'asha_worker_id': ashaWorkerId,
           'full_name': p['full_name'],
           'age': p['age'],
           'gender': p['gender'],
@@ -61,23 +85,24 @@ class SyncService {
         await db.markPatientSynced(p['local_id'] as String);
         print("Synced Patient: ${p['local_id']}");
       } catch (e) {
-        print("Failed to sync patient: \$e");
+        print("Failed to sync patient: $e");
+        await db.incrementPatientSyncAttempts(p['local_id'] as String);
       }
     }
 
     // 2. Sync Screenings and Upload Images
     final pendingScreenings = await db.getPendingScreenings();
     for (var s in pendingScreenings) {
+      if ((s['sync_attempts'] as int? ?? 0) >= 50) {
+        print("Screening ${s['local_id']} exceeded sync retry limit — needs manual attention.");
+        continue;
+      }
       try {
-        String? leftImageUrl;
-        String? rightImageUrl;
-
         // Upload Left Eye Image
         if (s['left_eye_local_path'] != null) {
           final file = File(s['left_eye_local_path'] as String);
           final fileName = "left_${s['local_id']}.jpg";
           await supabase.storage.from('fundus-images').upload(fileName, file, fileOptions: const FileOptions(upsert: true));
-          leftImageUrl = supabase.storage.from('fundus-images').getPublicUrl(fileName);
         }
 
         // Upload Right Eye Image
@@ -85,32 +110,45 @@ class SyncService {
           final file = File(s['right_eye_local_path'] as String);
           final fileName = "right_${s['local_id']}.jpg";
           await supabase.storage.from('fundus-images').upload(fileName, file, fileOptions: const FileOptions(upsert: true));
-          rightImageUrl = supabase.storage.from('fundus-images').getPublicUrl(fileName);
         }
 
         final payload = {
-          'local_id': s['local_id'],
-          // We will assign the cloud patient_id after fetching it below
-          'left_eye_image_url': leftImageUrl,
-          'right_eye_image_url': rightImageUrl,
-          'left_eye_grade': s['left_eye_grade'],
-          'right_eye_grade': s['right_eye_grade'],
-          'is_urgent_refer': s['is_urgent_refer'] == 1 || s['is_urgent_refer'] == true,
-          'thresholds_version': s['thresholds_version'],
-          'sync_status': 'synced',
+          'screening_id': s['local_id'],
+          'asha_worker_id': ashaWorkerId,
+          'left_eye_image_path': 'fundus-images/left_${s['local_id']}.jpg',
+          'right_eye_image_path': 'fundus-images/right_${s['local_id']}.jpg',
+          'ai_triage_grade_left': s['left_eye_grade'],
+          'ai_triage_grade_right': s['right_eye_grade'],
+          'ai_confidence_score': s['ai_confidence_score'] ?? 0.0,
+          'is_urgent_referral': s['is_urgent_refer'] == 1 || s['is_urgent_refer'] == true,
+          'clinical_status': 'pending_doctor_review',
+          'thresholds_version': s['thresholds_version'] ?? 'v1.0',
         };
 
-        // We must map local_id -> actual patient UUID in Supabase
-        final patientRes = await supabase.from('patients').select('id').eq('local_id', s['patient_local_id'] as String).single();
-        payload['patient_id'] = patientRes['id'];
+        // We must map local_id -> actual patient UUID in Supabase.
+        // If the patient hasn't synced yet (e.g. failed in the loop above), skip this
+        // screening for now rather than letting a generic .single() error mask the
+        // real cause. It will be retried next cycle once the patient syncs.
+        final patientRows = await supabase
+            .from('patients')
+            .select('id')
+            .eq('local_id', s['patient_local_id'] as String)
+            .limit(1);
+
+        if (patientRows.isEmpty) {
+          print("Skipping screening ${s['local_id']}: patient ${s['patient_local_id']} not yet synced.");
+          continue;
+        }
+        payload['patient_id'] = patientRows.first['id'];
 
         // Upsert Screening
-        await supabase.from('screenings').upsert(payload, onConflict: 'local_id');
+        await supabase.from('screenings').upsert(payload, onConflict: 'screening_id');
         // Mark locally synced
         await db.markScreeningSynced(s['local_id'] as String);
         print("Synced Screening: ${s['local_id']}");
       } catch (e) {
-        print("Failed to sync screening: \$e");
+        print("Failed to sync screening: $e");
+        await db.incrementScreeningSyncAttempts(s['local_id'] as String);
       }
     }
   }
@@ -133,7 +171,14 @@ void callbackDispatcher() {
       
       final refreshToken = inputData?['refresh_token'] as String?;
       if (refreshToken != null) {
-        await Supabase.instance.client.auth.recoverSession(refreshToken);
+        try {
+          await Supabase.instance.client.auth.recoverSession(refreshToken);
+        } catch (e) {
+          print("Background sync: failed to recover session — $e");
+          // Do not return early. If there's no valid session, performSync's own
+          // Supabase calls will fail per-row and log individually below, which is
+          // more informative than aborting the whole task silently here.
+        }
       }
       
       await SyncService.performSync();

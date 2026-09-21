@@ -12,9 +12,6 @@ class OptiXAIEngine {
   static const int inputSize = 224;
   static const int channels = 3;
   
-  // Calibrated thresholds exported from calibrate_thresholds.py
-  // Replacing standard argmax static logic
-  final List<double> _calibratedThresholds = [0.45, 0.35, 0.40, 0.55, 0.50];
 
 
 
@@ -120,8 +117,12 @@ class OptiXAIEngine {
       }
     }
 
-    // 4. Post-processing
-    return _postProcess(_softmax(rawProbs));
+    // 4. Post-processing — guard against double softmax
+    final double probSum = rawProbs.reduce((a, b) => a + b);
+    final List<double> finalProbs = (probSum - 1.0).abs() < 0.05
+        ? rawProbs
+        : _softmax(rawProbs);
+    return _postProcess(finalProbs);
   }
 
   /// Execute Edge AI Inference from pre-processed Uint8List data.
@@ -137,44 +138,51 @@ class OptiXAIEngine {
     final inputTensor = _interpreter!.getInputTensor(0);
     final inputShape = inputTensor.shape; 
     final inputType = inputTensor.type;
-
+    final outputTensor = _interpreter!.getOutputTensor(0);
+    // TEMP-DIAG: print('[OptiXAI Debug] inputType: ${inputTensor.type}  outputType: ${outputTensor.type}');
     // 1. Load pre-processed native output directly into buffer
-    // OpenCV outputs BGR, so we must invert the byte reads (b, g, r) to match TFLite RGB.
+    // preprocessedData is already RGB — COLOR_BGR2RGB was applied in OpenCV pipeline.
+    // Read channels in order: R=index 0, G=index 1, B=index 2.
     Object reshapedInput;
     if (inputType == TensorType.float32) {
-      final flatList = <double>[];
+      final flatList = Float32List(preprocessedData.length);
       for (int i = 0; i < preprocessedData.length; i += 3) {
-          final int b = preprocessedData[i];
+          final int r = preprocessedData[i];
           final int g = preprocessedData[i+1];
-          final int r = preprocessedData[i+2];
+          final int b = preprocessedData[i+2];
           
-          flatList.add(((r / 255.0) - 0.5) * 2.0);
-          flatList.add(((g / 255.0) - 0.5) * 2.0);
-          flatList.add(((b / 255.0) - 0.5) * 2.0);
+          flatList[i] = (r / 255.0 - 0.5) * 2.0;
+          flatList[i+1] = (g / 255.0 - 0.5) * 2.0;
+          flatList[i+2] = (b / 255.0 - 0.5) * 2.0;
       }
       reshapedInput = flatList.reshape<double>(inputShape);
     } else {
-      final flatList = <int>[];
+      final flatList = Int8List(preprocessedData.length);
+      final double inScale = inputTensor.params.scale;
+      final int inZp = inputTensor.params.zeroPoint;
       for (int i = 0; i < preprocessedData.length; i += 3) {
-          final int b = preprocessedData[i];
+          final int r = preprocessedData[i];
           final int g = preprocessedData[i+1];
-          final int r = preprocessedData[i+2];
+          final int b = preprocessedData[i+2];
           
           if (inputType == TensorType.int8) {
-            flatList.add(r - 128);
-            flatList.add(g - 128);
-            flatList.add(b - 128);
+            double rFloat = (r / 255.0 - 0.5) * 2.0;
+            double gFloat = (g / 255.0 - 0.5) * 2.0;
+            double bFloat = (b / 255.0 - 0.5) * 2.0;
+            
+            flatList[i] = ((rFloat / inScale).round() + inZp).clamp(-128, 127);
+            flatList[i+1] = ((gFloat / inScale).round() + inZp).clamp(-128, 127);
+            flatList[i+2] = ((bFloat / inScale).round() + inZp).clamp(-128, 127);
           } else {
-            flatList.add(r);
-            flatList.add(g);
-            flatList.add(b);
+            flatList[i] = r;
+            flatList[i+1] = g;
+            flatList[i+2] = b;
           }
       }
       reshapedInput = flatList.reshape<int>(inputShape);
     }
 
     // 2. Local Inference execution
-    final outputTensor = _interpreter!.getOutputTensor(0);
     final outputType = outputTensor.type;
     
     Object outputBuffer;
@@ -184,6 +192,9 @@ class OptiXAIEngine {
       outputBuffer = List.generate(1, (i) => List.filled(5, 0));
     }
 
+    // `reshapedInput` is either Float32List or Int8List depending on inputType.
+    // `reshape` returns the correct flat list based on generic type, but to be absolutely safe
+    // we should ensure it's a typed array. However, tflite_flutter handles reshaping flat typed lists.
     _interpreter!.run(reshapedInput, outputBuffer);
 
     // 3. Dynamic Dequantization
@@ -198,14 +209,23 @@ class OptiXAIEngine {
       final scale = outputTensor.params.scale;
       final zeroPoint = outputTensor.params.zeroPoint;
       for (int i = 0; i < 5; i++) {
-        int quantizedValue = buffer[0][i];
+        int quantizedValue = buffer[0][i].toSigned(8);
         double probability = (quantizedValue - zeroPoint) * scale;
         rawProbs.add(probability);
       }
     }
 
+    // TEMP-DIAG: print('[OptiXAI Debug] rawProbs: $rawProbs');
     // 4. Post-processing
-    return _postProcess(_softmax(rawProbs));
+    // The TFLite model's graph already includes a softmax output layer.
+    // Dequantized values sum to ~1.0 (they are probabilities, not logits).
+    // Applying _softmax() again would compress the distribution toward uniform,
+    // destroying the model's discriminative signal.
+    final double probSum = rawProbs.reduce((a, b) => a + b);
+    final List<double> finalProbs = (probSum - 1.0).abs() < 0.05
+        ? rawProbs  // Already valid probabilities — skip softmax
+        : _softmax(rawProbs);  // Raw logits — apply softmax
+    return _postProcess(finalProbs);
   }
 
   /// Converts raw logits into a proper probability distribution summing to 1.0
@@ -216,7 +236,7 @@ class OptiXAIEngine {
     return expLogits.map((e) => e / sumExp).toList();
   }
 
-  /// Shared post-processing: applies calibrated thresholds, computes clinical flags.
+  /// Shared post-processing: computes clinical flags.
   Map<String, dynamic> _postProcess(List<double> rawProbs) {
     int predictedGrade = 0;
     double maxConfidence = -1.0;
@@ -242,10 +262,6 @@ class OptiXAIEngine {
     // Even when the model misclassifies 4→3, this combined score remains high,
     // giving clinicians a reliable "urgency signal" regardless of the specific grade.
     double urgentReferConfidence = rawProbs[3] + rawProbs[4];
-
-    print('[OptiXAI Debug] rawProbs: $rawProbs');
-    print('[OptiXAI Debug] predictedGrade: $predictedGrade');
-    print('[OptiXAI Debug] maxConfidence: $maxConfidence');
 
     return {
       'dr_grade': predictedGrade, // 0-4 (full 5-class prediction preserved for analytics)

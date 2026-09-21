@@ -33,45 +33,39 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden font-sans text-white">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-sans text-slate-900">
       {/* Dynamic Background Gradients */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full mix-blend-screen animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full mix-blend-screen" />
-      
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-500/10 blur-[120px] rounded-full animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo & Branding */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 shadow-2xl shadow-emerald-500/20">
-            <Eye className="w-8 h-8 text-emerald-400" />
+          <div className="w-16 h-16 bg-white border border-slate-100 rounded-2xl flex items-center justify-center mb-6 shadow-[0_4px_20px_-4px_rgba(20,184,166,0.15)]">
+            <Eye className="w-8 h-8 text-teal-600" />
           </div>
-          <h1 className="text-3xl font-light tracking-tight text-white mb-2">Opti<span className="font-semibold text-emerald-400">XAI</span></h1>
-          <p className="text-sm text-neutral-400 tracking-wide uppercase font-medium flex items-center gap-2">
-            <Activity className="w-4 h-4 text-blue-400" />
+          <h1 className="text-3xl font-light tracking-tight text-slate-900 mb-2">Opti<span className="font-semibold text-teal-600">XAI</span></h1>
+          <p className="text-sm text-slate-500 tracking-wide uppercase font-medium flex items-center gap-2">
+            <Activity className="w-4 h-4 text-teal-500" />
             Ophthalmology Portal
           </p>
         </div>
 
-        {/* Glassmorphism Card */}
-        <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/5 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-          {/* Subtle inner highlight */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        {/* Card */}
+        <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
           
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs text-neutral-400 uppercase tracking-wider font-semibold ml-1">Secure Email</label>
+              <label className="text-xs text-slate-500 uppercase tracking-wider font-semibold ml-1">Secure Email</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-neutral-500" />
+                  <Mail className="h-5 w-5 text-slate-400" />
                 </div>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-11 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-transparent transition-all"
+                  className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all"
                   placeholder="doctor@hospital.org"
                   required
                 />
@@ -79,16 +73,16 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-neutral-400 uppercase tracking-wider font-semibold ml-1">Access Credential</label>
+              <label className="text-xs text-slate-500 uppercase tracking-wider font-semibold ml-1">Access Credential</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-neutral-500" />
+                  <Lock className="h-5 w-5 text-slate-400" />
                 </div>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-11 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-transparent transition-all"
+                  className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all"
                   placeholder="••••••••"
                   required
                 />
@@ -96,19 +90,19 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3">
+              <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                <p className="text-sm text-red-400 font-medium">{error}</p>
+                <p className="text-sm text-red-600 font-medium">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="group w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+              className="group w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_0_rgba(20,184,166,0.39)] hover:shadow-[0_6px_20px_rgba(20,184,166,0.23)]"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
                   Authenticate
@@ -119,8 +113,8 @@ export default function LoginPage() {
           </form>
           
           {/* Footer Text */}
-          <div className="mt-8 pt-6 border-t border-white/5 text-center">
-            <p className="text-xs text-neutral-500 flex items-center justify-center gap-1.5">
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-xs text-slate-400 flex items-center justify-center gap-1.5 font-medium">
               <Lock className="w-3 h-3" />
               End-to-End Encrypted Triage Data
             </p>

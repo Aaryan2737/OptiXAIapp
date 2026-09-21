@@ -18,7 +18,26 @@ class LocalDatabase {
     final dbPath = await getApplicationDocumentsDirectory();
     final path = join(dbPath.path, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path,
+      version: 3,
+      onCreate: _createDB,
+      onUpgrade: _onUpgrade,
+    );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE patients ADD COLUMN sync_attempts INTEGER NOT NULL DEFAULT 0');
+      await db.execute('ALTER TABLE screenings ADD COLUMN sync_attempts INTEGER NOT NULL DEFAULT 0');
+    }
+    if (oldVersion < 3) {
+      try {
+        await db.execute('ALTER TABLE screenings ADD COLUMN ai_confidence_score REAL DEFAULT 0.0');
+      } catch (e) {
+        print('Column ai_confidence_score might already exist: $e');
+      }
+    }
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -33,6 +52,7 @@ class LocalDatabase {
       gender TEXT,
       contact_number TEXT,
       sync_status TEXT DEFAULT 'pending',
+      sync_attempts INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL
     )
     ''');
@@ -47,9 +67,11 @@ class LocalDatabase {
       right_eye_local_path TEXT,
       left_eye_grade INTEGER,
       right_eye_grade INTEGER,
+      ai_confidence_score REAL DEFAULT 0.0,
       is_urgent_refer INTEGER NOT NULL,
       thresholds_version TEXT NOT NULL,
       sync_status TEXT DEFAULT 'pending',
+      sync_attempts INTEGER NOT NULL DEFAULT 0,
       screened_at TEXT NOT NULL,
       FOREIGN KEY (patient_local_id) REFERENCES patients (local_id) ON DELETE CASCADE
     )
@@ -101,6 +123,22 @@ class LocalDatabase {
   Future<void> markScreeningSynced(String localId) async {
     final db = await instance.database;
     await db.update('screenings', {'sync_status': 'synced'}, where: 'local_id = ?', whereArgs: [localId]);
+  }
+
+  Future<void> incrementPatientSyncAttempts(String localId) async {
+    final db = await instance.database;
+    await db.rawUpdate(
+      'UPDATE patients SET sync_attempts = sync_attempts + 1 WHERE local_id = ?',
+      [localId],
+    );
+  }
+
+  Future<void> incrementScreeningSyncAttempts(String localId) async {
+    final db = await instance.database;
+    await db.rawUpdate(
+      'UPDATE screenings SET sync_attempts = sync_attempts + 1 WHERE local_id = ?',
+      [localId],
+    );
   }
 
   // --- UI Fetch Operations ---

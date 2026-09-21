@@ -37,78 +37,36 @@ class ScreeningResultScreen extends StatelessWidget {
     // is_urgent_refer = (left_eye_grade >= 3 || right_eye_grade >= 3)
     final isUrgent = (leftGrade >= 3 || rightGrade >= 3);
     final isReferable = (leftGrade >= 2 || rightGrade >= 2);
-    
-    final riskColor = isUrgent ? _red : (isReferable ? _amber : _teal);
-    final riskLabel = isUrgent ? 'URGENT REFERRAL' : (isReferable ? 'MODERATE RISK' : 'NORMAL');
 
     return Scaffold(
       backgroundColor: _bgColor,
       appBar: AppBar(
         backgroundColor: _cardColor,
         elevation: 0,
-        title: const Text('Bilateral Analysis Complete', style: TextStyle(color: _textPrimary, fontWeight: FontWeight.w600)),
+        title: const Text('Capture Successful', style: TextStyle(color: _textPrimary, fontWeight: FontWeight.w600)),
         iconTheme: const IconThemeData(color: _textPrimary),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Left Eye (OS)', style: TextStyle(color: _textMuted, fontSize: 13, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.memory(leftBytes, height: 140, width: double.infinity, fit: BoxFit.cover),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Right Eye (OD)', style: TextStyle(color: _textMuted, fontSize: 13, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.memory(rightBytes, height: 140, width: double.infinity, fit: BoxFit.cover),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              const Spacer(),
+              const Icon(Icons.check_circle_outline, color: _teal, size: 100),
+              const SizedBox(height: 32),
+              const Text(
+                'Data Synced to Clinic',
+                style: TextStyle(color: _textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: riskColor.withValues(alpha: 0.15),
-                  border: Border.all(color: riskColor.withValues(alpha: 0.5), width: 2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    Text(riskLabel, style: TextStyle(color: riskColor, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildGradeColumn('OS (Left)', leftGrade, leftResult['confidence_score'] as double),
-                        Container(height: 40, width: 1, color: _textMuted.withValues(alpha: 0.3)),
-                        _buildGradeColumn('OD (Right)', rightGrade, rightResult['confidence_score'] as double),
-                      ],
-                    )
-                  ],
-                ),
+              const SizedBox(height: 16),
+              const Text(
+                'The fundus images have been successfully uploaded and are pending doctor review.',
+                style: TextStyle(color: _textMuted, fontSize: 16),
+                textAlign: TextAlign.center,
               ),
               const Spacer(),
               SizedBox(
@@ -135,18 +93,6 @@ class ScreeningResultScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildGradeColumn(String label, int grade, double confidence) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(color: _textMuted, fontSize: 12)),
-        const SizedBox(height: 4),
-        Text('Grade $grade', style: const TextStyle(color: _textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 2),
-        Text('${(confidence * 100).toStringAsFixed(1)}%', style: const TextStyle(color: _textMuted, fontSize: 12)),
-      ],
     );
   }
 }
