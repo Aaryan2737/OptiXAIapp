@@ -12,13 +12,10 @@ export default async function DashboardPage() {
 
   // Get start of day for filtering
   const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const todayIso = today.toISOString()
-
   // Fetch all screenings (Doctor RLS policy allows viewing all)
   const { data: screenings, error } = await supabase
     .from('screenings')
-    .select('id, left_eye_grade, right_eye_grade, is_urgent_refer, screened_at, patients(asha_worker_id)')
+    .select('id, ai_triage_grade_left, ai_triage_grade_right, is_urgent_referral, screened_at, patients(asha_worker_id)')
   
   if (error) {
     console.error('Error fetching screenings:', error)
@@ -28,20 +25,23 @@ export default async function DashboardPage() {
 
   // Calculate Metrics
   const screeningsToday = validScreenings.filter(s => new Date(s.screened_at) >= today).length
-  const urgentPending = validScreenings.filter(s => s.is_urgent_refer).length // Assuming 'pending' means it's urgent and hasn't been referred yet. In reality, we'd check the `referrals` table, but for the dashboard overview, urgent count is fine.
+  const urgentPending = validScreenings.filter(s => s.is_urgent_referral).length // Assuming 'pending' means it's urgent and hasn't been referred yet. In reality, we'd check the `referrals` table, but for the dashboard overview, urgent count is fine.
   
   // Active ASHA workers (unique asha_worker_ids from all screenings)
   const activeAshas = new Set(
     validScreenings
-      .map(s => (s.patients as any)?.asha_worker_id)
+      .map(s => {
+        const p = s.patients as { asha_worker_id?: string } | null;
+        return p?.asha_worker_id;
+      })
       .filter(id => id)
   ).size
 
   // Calculate Distribution
   const distribution = [0, 0, 0, 0, 0]
   validScreenings.forEach(s => {
-    if (s.left_eye_grade !== null) distribution[s.left_eye_grade]++
-    if (s.right_eye_grade !== null) distribution[s.right_eye_grade]++
+    if (s.ai_triage_grade_left !== null) distribution[s.ai_triage_grade_left]++
+    if (s.ai_triage_grade_right !== null) distribution[s.ai_triage_grade_right]++
   })
 
   const chartData = [

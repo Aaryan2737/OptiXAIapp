@@ -14,8 +14,8 @@ export default async function QueuePage() {
     .from('screenings')
     .select(`
       id, 
-      left_eye_grade, 
-      right_eye_grade, 
+      ai_triage_grade_left, 
+      ai_triage_grade_right, 
       screened_at,
       patients (
         full_name,
@@ -26,7 +26,7 @@ export default async function QueuePage() {
         )
       )
     `)
-    .eq('is_urgent_refer', true)
+    .eq('is_urgent_referral', true)
     .order('screened_at', { ascending: false })
   
   if (error) {
@@ -102,9 +102,9 @@ export default async function QueuePage() {
                   </tr>
                 ) : (
                   queue.map((row) => {
-                    const patient = row.patients as any
+                    const patient = row.patients as { full_name?: string; contact_number?: string; asha_workers?: { full_name?: string; assigned_district?: string } } | null
                     const asha = patient?.asha_workers
-                    const maxGrade = Math.max(row.left_eye_grade || 0, row.right_eye_grade || 0)
+                    const maxGrade = Math.max(row.ai_triage_grade_left || 0, row.ai_triage_grade_right || 0)
                     
                     return (
                       <tr key={row.id} className="hover:bg-white/[0.02] transition-colors group">

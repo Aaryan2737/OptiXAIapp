@@ -1,8 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Brain, Scan, Eye, User, FileText, CheckCircle2 } from 'lucide-react'
-import Image from 'next/image'
+import { ArrowLeft, Brain, Scan, Eye, User, FileText } from 'lucide-react'
 import ReferralAction from './ReferralAction'
 
 export default async function CaseReviewPage({ params }: { params: { id: string } }) {
@@ -37,8 +36,8 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
     .select('*')
     .eq('screening_id', params.id)
 
-  const patient = screening.patients as any
-  const maxGrade = Math.max(screening.left_eye_grade || 0, screening.right_eye_grade || 0)
+  const patient = screening.patients as { full_name?: string, age?: number, gender?: string, contact_number?: string, asha_workers?: { full_name?: string, assigned_district?: string } } | null
+  const maxGrade = Math.max(screening.ai_triage_grade_left || 0, screening.ai_triage_grade_right || 0)
 
   // Helper to get signed URLs safely
   async function getSignedUrl(bucket: string, publicUrl: string | null) {
@@ -54,8 +53,8 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
     }
   }
 
-  const leftEyeUrl = await getSignedUrl('fundus-images', screening.left_eye_image_url)
-  const rightEyeUrl = await getSignedUrl('fundus-images', screening.right_eye_image_url)
+  const leftEyeUrl = await getSignedUrl('fundus-images', screening.left_eye_image_path)
+  const rightEyeUrl = await getSignedUrl('fundus-images', screening.right_eye_image_path)
   
   // Find heatmaps
   const leftHeatmapObj = heatmaps?.find(h => h.heatmap_url.includes('left'))
@@ -83,7 +82,7 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
         {/* Left Col: Imagery */}
         <div className="lg:col-span-2 space-y-6">
           {/* Left Eye Panel */}
-          {screening.left_eye_image_url && (
+          {screening.left_eye_image_path && (
             <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
               <h2 className="text-lg font-medium flex items-center gap-2 mb-6">
                 <Eye className="w-5 h-5 text-blue-400" />
@@ -123,18 +122,18 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
               
               <div className="mt-6 flex items-center gap-4">
                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
-                    screening.left_eye_grade >= 4 ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
-                    screening.left_eye_grade === 3 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 
+                    screening.ai_triage_grade_left >= 4 ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
+                    screening.ai_triage_grade_left === 3 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 
                     'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
                   }`}>
-                    Model Prediction: Grade {screening.left_eye_grade}
+                    Model Prediction: Grade {screening.ai_triage_grade_left}
                   </span>
               </div>
             </div>
           )}
 
           {/* Right Eye Panel */}
-          {screening.right_eye_image_url && (
+          {screening.right_eye_image_path && (
             <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
               <h2 className="text-lg font-medium flex items-center gap-2 mb-6">
                 <Eye className="w-5 h-5 text-blue-400" />
@@ -174,11 +173,11 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
               
               <div className="mt-6 flex items-center gap-4">
                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
-                    screening.right_eye_grade >= 4 ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
-                    screening.right_eye_grade === 3 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 
+                    screening.ai_triage_grade_right >= 4 ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
+                    screening.ai_triage_grade_right === 3 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 
                     'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
                   }`}>
-                    Model Prediction: Grade {screening.right_eye_grade}
+                    Model Prediction: Grade {screening.ai_triage_grade_right}
                   </span>
               </div>
             </div>
@@ -196,20 +195,20 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
             <dl className="space-y-4">
               <div>
                 <dt className="text-xs text-neutral-500 uppercase tracking-wider">Name</dt>
-                <dd className="text-white font-medium text-lg">{patient.full_name}</dd>
+                <dd className="text-white font-medium text-lg">{patient?.full_name || 'Unknown'}</dd>
               </div>
               <div>
-                <dt className="text-xs text-neutral-500 uppercase tracking-wider">Age / Gender</dt>
-                <dd className="text-neutral-300">{patient.age} Yrs • {patient.gender}</dd>
+                <dt className="text-xs text-neutral-500 uppercase tracking-wider">Age & Gender</dt>
+                <dd className="text-white">{patient?.age || '--'} yrs, {patient?.gender || '--'}</dd>
               </div>
               <div>
                 <dt className="text-xs text-neutral-500 uppercase tracking-wider">Contact</dt>
-                <dd className="text-neutral-300">{patient.contact_number}</dd>
+                <dd className="text-white">{patient?.contact_number || '--'}</dd>
               </div>
-              <div className="pt-4 border-t border-white/5">
-                <dt className="text-xs text-neutral-500 uppercase tracking-wider">ASHA Worker</dt>
-                <dd className="text-emerald-400 text-sm mt-1">{patient.asha_workers.full_name}</dd>
-                <dd className="text-neutral-500 text-xs">{patient.asha_workers.assigned_district}</dd>
+              <div className="pt-4 border-t border-white/10 mt-4">
+                <dt className="text-xs text-emerald-500 uppercase tracking-wider mb-1">ASHA Worker Assigned</dt>
+                <dd className="text-white font-medium">{patient?.asha_workers?.full_name || '--'}</dd>
+                <dd className="text-neutral-400 text-sm">{patient?.asha_workers?.assigned_district || '--'} District</dd>
               </div>
             </dl>
           </div>
@@ -220,10 +219,10 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
               Ophthalmologist Action
             </h2>
             <p className="text-sm text-neutral-400 mb-6">
-              Review the Grad-CAM evidence. If you concur with the AI's urgent flag, dispatch an empathetic referral message directly to the patient via the local ASHA worker.
+              Review the Grad-CAM evidence. If you concur with the AI&apos;s urgent flag, dispatch an empathetic referral message directly to the patient via the local ASHA worker.
             </p>
             
-            <ReferralAction screeningId={screening.id} patientName={patient.full_name} grade={maxGrade} />
+            <ReferralAction screeningId={screening.id} patientName={patient?.full_name || 'Unknown'} grade={maxGrade} />
           </div>
 
         </div>
