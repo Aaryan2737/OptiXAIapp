@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, LayoutDashboard } from 'lucide-react'
 import DashboardClient from './components/DashboardClient'
+import LogoutButton from './components/LogoutButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -67,6 +68,7 @@ export default async function DashboardPage() {
                 <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
                 Connected as {user.email}
               </div>
+              <LogoutButton />
             </div>
           </div>
         </div>
