@@ -128,6 +128,9 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
                   }`}>
                     Model Prediction: Grade {screening.ai_triage_grade_left}
                   </span>
+                  <span className="text-sm text-neutral-400">
+                    Confidence: {(screening.ai_confidence_score * 100).toFixed(1)}%
+                  </span>
               </div>
             </div>
           )}
@@ -178,6 +181,9 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
                     'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
                   }`}>
                     Model Prediction: Grade {screening.ai_triage_grade_right}
+                  </span>
+                  <span className="text-sm text-neutral-400">
+                    Confidence: {(screening.ai_confidence_score * 100).toFixed(1)}%
                   </span>
               </div>
             </div>

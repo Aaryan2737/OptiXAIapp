@@ -26,7 +26,7 @@ export default async function QueuePage() {
         )
       )
     `)
-    .eq('is_urgent_referral', true)
+    .eq('clinical_status', 'pending_doctor_review')
     .order('screened_at', { ascending: false })
   
   if (error) {

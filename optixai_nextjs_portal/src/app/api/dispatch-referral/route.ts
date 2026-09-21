@@ -66,6 +66,14 @@ export async function POST(request: Request) {
 
     if (dbError) throw dbError
 
+    // Mark screening as referred so it drops off the queue
+    const { error: updateError } = await supabase
+      .from('screenings')
+      .update({ clinical_status: 'referred' })
+      .eq('id', screeningId)
+
+    if (updateError) throw updateError
+
     // Note: In a real deployment, we would trigger a Twilio/WhatsApp API call here.
     
     return NextResponse.json({ success: true, message: messageText })
