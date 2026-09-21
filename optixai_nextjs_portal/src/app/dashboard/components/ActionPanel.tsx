@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ScreeningRecord } from '@/types/screening';
 import { CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
-import { supabase } from '@/hooks/useScreeningQueue';
+import { createClient } from '@/utils/supabase/client';
 
 interface ActionPanelProps {
   screening: ScreeningRecord;
@@ -10,6 +10,7 @@ interface ActionPanelProps {
 export default function ActionPanel({ screening }: ActionPanelProps) {
   const [isConfirming, setIsConfirming] = useState(false);
   const [isDowngrading, setIsDowngrading] = useState(false);
+  const supabase = createClient();
 
   const handleConfirmUrgent = async () => {
     setIsConfirming(true);

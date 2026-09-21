@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/client';
 import { ScreeningRecord } from '../types/screening';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export function useScreeningQueue() {
   const [screenings, setScreenings] = useState<ScreeningRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchScreenings = async () => {
