@@ -19,11 +19,11 @@ export default async function QueuePage() {
       screened_at,
       patients (
         full_name,
-        contact_number,
-        asha_workers (
-          full_name,
-          assigned_district
-        )
+        contact_number
+      ),
+      asha_workers (
+        full_name,
+        assigned_district
       )
     `)
     .eq('clinical_status', 'pending_doctor_review')
@@ -102,8 +102,8 @@ export default async function QueuePage() {
                   </tr>
                 ) : (
                   queue.map((row) => {
-                    const patient = row.patients as { full_name?: string; contact_number?: string; asha_workers?: { full_name?: string; assigned_district?: string } } | null
-                    const asha = patient?.asha_workers
+                    const patient = row.patients as { full_name?: string; contact_number?: string } | null
+                    const asha = row.asha_workers as { full_name?: string; assigned_district?: string } | null
                     const maxGrade = Math.max(row.ai_triage_grade_left || 0, row.ai_triage_grade_right || 0)
                     
                     return (

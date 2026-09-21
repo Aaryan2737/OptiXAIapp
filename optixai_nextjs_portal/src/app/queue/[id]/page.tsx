@@ -16,11 +16,11 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
     .select(`
       *,
       patients (
-        *,
-        asha_workers (
-          full_name,
-          assigned_district
-        )
+        *
+      ),
+      asha_workers (
+        full_name,
+        assigned_district
       )
     `)
     .eq('id', params.id)
@@ -36,7 +36,8 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
     .select('*')
     .eq('screening_id', params.id)
 
-  const patient = screening.patients as { full_name?: string, age?: number, gender?: string, contact_number?: string, asha_workers?: { full_name?: string, assigned_district?: string } } | null
+  const patient = screening.patients as { full_name?: string, age?: number, gender?: string, contact_number?: string } | null
+  const asha = screening.asha_workers as { full_name?: string, assigned_district?: string } | null
   const maxGrade = Math.max(screening.ai_triage_grade_left || 0, screening.ai_triage_grade_right || 0)
 
   // Helper to get signed URLs safely
@@ -213,8 +214,8 @@ export default async function CaseReviewPage({ params }: { params: { id: string 
               </div>
               <div className="pt-4 border-t border-white/10 mt-4">
                 <dt className="text-xs text-emerald-500 uppercase tracking-wider mb-1">ASHA Worker Assigned</dt>
-                <dd className="text-white font-medium">{patient?.asha_workers?.full_name || '--'}</dd>
-                <dd className="text-neutral-400 text-sm">{patient?.asha_workers?.assigned_district || '--'} District</dd>
+                <dd className="text-white font-medium">{asha?.full_name || '--'}</dd>
+                <dd className="text-neutral-400 text-sm">{asha?.assigned_district || '--'} District</dd>
               </div>
             </dl>
           </div>
